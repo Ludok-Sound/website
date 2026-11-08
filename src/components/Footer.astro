@@ -1,0 +1,48 @@
+---
+// Pie: marca, las páginas del producto, recursos y la licencia.
+import Logo from './Logo.astro';
+import { ui } from '../i18n';
+import { AUTHOR, href, LICENSE_URL, paths, REPO_URL, SOUNDVAULT_URL, type Lang } from '../site';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = ui[lang];
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href={href(paths.home[lang])}>
+          <Logo />
+          Ludok Sound
+        </a>
+        <p>{t.footer.tagline}</p>
+      </div>
+      <nav aria-labelledby="footer-product">
+        <h2 id="footer-product">{t.footer.product}</h2>
+        <ul>
+          <li><a href={href(paths.features[lang])}>{t.nav.features}</a></li>
+          <li><a href={href(paths.visuals[lang])}>{t.nav.visuals}</a></li>
+          <li><a href={href(paths.download[lang])}>{t.nav.download}</a></li>
+        </ul>
+      </nav>
+      <nav aria-labelledby="footer-resources">
+        <h2 id="footer-resources">{t.footer.resources}</h2>
+        <ul>
+          <li><a href={href(paths.articles[lang])}>{t.nav.articles}</a></li>
+          <li><a href={REPO_URL}>GitHub</a></li>
+          <li><a href={SOUNDVAULT_URL}>SoundVault</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <span>© {year} {AUTHOR}</span>
+      <a href={LICENSE_URL}>{t.footer.license}</a>
+    </div>
+  </div>
+</footer>

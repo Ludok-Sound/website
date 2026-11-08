@@ -1,0 +1,20 @@
+---
+// Página de «no existe». GitHub Pages la sirve para cualquier ruta que no encuentre, sin saber en
+// qué idioma iba la visita: por eso lleva los dos.
+import Base from '../layouts/Base.astro';
+import { href, paths } from '../site';
+---
+
+<Base lang="es" title="404 | Ludok Sound" description="Esta página no existe." paths={paths.home}>
+  <div class="wrap not-found">
+    <div>
+      <h1>404</h1>
+      <p>Esta página no existe.</p>
+      <p lang="en">This page does not exist.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href={href(paths.home.es)}>Volver al inicio</a>
+        <a class="btn" href={href(paths.home.en)} lang="en">Back to home</a>
+      </div>
+    </div>
+  </div>
+</Base>

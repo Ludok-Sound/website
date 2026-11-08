@@ -1,0 +1,214 @@
+---
+// La portada, en el idioma que le pasen: pages/index.astro (castellano) y pages/en/index.astro
+// (inglés) solo la llaman. Es un resumen: cada bloque lleva a su página (Funciones, Visuales,
+// el artículo de la comparativa, Descargar), nunca a otro punto de esta misma.
+import CtaBand from './CtaBand.astro';
+import Icon from './Icon.astro';
+import Phone from './Phone.astro';
+import VisualsVideo from './VisualsVideo.astro';
+import Waveform from './Waveform.astro';
+import Base from '../layouts/Base.astro';
+import { ui } from '../i18n';
+import { articlePath, AUTHOR, href, LICENSE_URL, paths, RELEASES_URL, REPO_URL, type Lang } from '../site';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = ui[lang];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Ludok Sound',
+  description: t.meta.description,
+  applicationCategory: 'MultimediaApplication',
+  operatingSystem: 'Android, Linux, Windows',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+  license: 'https://opensource.org/licenses/MIT',
+  downloadUrl: RELEASES_URL,
+  codeRepository: REPO_URL,
+  author: { '@type': 'Person', name: AUTHOR },
+  inLanguage: lang,
+};
+---
+
+<Base lang={lang} title={t.meta.title} description={t.meta.description} paths={paths.home} current="home" jsonLd={jsonLd}>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <a class="label" href={LICENSE_URL}><span class="dot"></span>{t.hero.kicker}</a>
+        <h1>
+          {t.hero.title}
+          <span>{t.hero.titleMuted}</span>
+        </h1>
+        <p class="lead">{t.hero.lead}</p>
+        <div class="actions">
+          <a class="btn btn-primary" href={href(paths.download[lang])}>
+            <Icon name="download" />
+            {t.hero.primary}
+          </a>
+          <a class="btn" href={REPO_URL}>
+            <Icon name="github" />
+            {t.hero.secondary}
+          </a>
+        </div>
+        <p class="platforms">{t.hero.platforms}</p>
+
+        <div class="now">
+          <span class="label">{t.hero.nowPlaying}</span>
+          <ul class="chips">
+            <li><span class="key">{t.hero.camelot}</span> · {t.hero.chips[0]}</li>
+            {t.hero.chips.slice(1).map((chip) => <li>{chip}</li>)}
+          </ul>
+          <Waveform />
+        </div>
+      </div>
+      <div class="hero-visual">
+        <Phone image="reproductor" alt={t.hero.phoneAlt} eager />
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <ul class="facts">
+      {
+        t.facts.map((fact) => (
+          <li>
+            <strong>{fact.value}</strong>
+            <span>{fact.label}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="label">{t.how.kicker}</span>
+        <h2>{t.how.title}</h2>
+        <p>{t.how.lead}</p>
+      </div>
+      <ol class="features" style="--cols: 3">
+        {
+          t.how.steps.map((step, i) => (
+            <li class="feature">
+              <span class="num">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="label">{t.highlights.kicker}</span>
+        <h2>{t.highlights.title}</h2>
+        <p>{t.highlights.lead}</p>
+      </div>
+      <ul class="highlights">
+        {
+          t.highlights.items.map((item) => (
+            <li class="highlight">
+              <Phone image={item.image} alt={item.alt} />
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="more">
+        <a class="link" href={href(paths.features[lang])}>
+          {t.highlights.cta}
+          <Icon name="arrow" />
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section band-dark">
+    <div class="wrap">
+      <div class="section-head centered">
+        <span class="label">{t.visualsTeaser.kicker}</span>
+        <h2>{t.visualsTeaser.title}</h2>
+        <p>{t.visualsTeaser.lead}</p>
+      </div>
+      <VisualsVideo lang={lang} />
+      <p class="more">
+        <a class="link" href={href(paths.visuals[lang])}>
+          {t.visualsTeaser.cta}
+          <Icon name="arrow" />
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="label">{t.compare.kicker}</span>
+        <h2>{t.compare.title}</h2>
+        <p>{t.compare.lead}</p>
+      </div>
+      <div class="table-wrap wide">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col"><span class="sr-only">{t.compare.head[0]}</span></th>
+              <th scope="col" class="us">{t.compare.head[1]}</th>
+              <th scope="col">{t.compare.head[2]}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              t.compare.rows.map(([what, us, them]) => (
+                <tr>
+                  <th scope="row">{what}</th>
+                  <td class="us">{us}</td>
+                  <td>{them}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="more start">
+        <a class="link" href={href(articlePath(lang, t.compare.slug))}>
+          {t.compare.cta}
+          <Icon name="arrow" />
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>{t.support.title}</h2>
+        <p>{t.support.lead}</p>
+      </div>
+      <ul class="cards">
+        {
+          t.support.items.map((item, i) => (
+            <li class="card">
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+              <a class="btn btn-sm" href={item.href}>
+                {i === 0 && <Icon name="star" />}
+                {item.cta}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand lang={lang} />
+</Base>

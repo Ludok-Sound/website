@@ -1,0 +1,108 @@
+---
+// La página de Funciones: para escuchar, para ordenar y pinchar (con las capturas) y lo que
+// protege tus datos. Los textos están en i18n.ts, bajo «features».
+import CtaBand from './CtaBand.astro';
+import Icon from './Icon.astro';
+import PageHead from './PageHead.astro';
+import Phone from './Phone.astro';
+import Base from '../layouts/Base.astro';
+import { ui } from '../i18n';
+import { paths, type Lang } from '../site';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = ui[lang].features;
+---
+
+<Base lang={lang} title={t.meta.title} description={t.meta.description} paths={paths.features} current="features">
+  <PageHead kicker={t.head.kicker} title={t.head.title} lead={t.head.lead} />
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="label">{t.listen.kicker}</span>
+        <h2>{t.listen.title}</h2>
+        <p>{t.listen.lead}</p>
+      </div>
+      <div class="split">
+        <Phone image="sin-conexion" alt={t.listen.imageAlt} />
+        <ul class="features">
+          {
+            t.listen.items.map((item) => (
+              <li class="feature">
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="label">{t.dj.kicker}</span>
+        <h2>{t.dj.title}</h2>
+        <p>{t.dj.lead}</p>
+      </div>
+      <div class="showcases">
+        {
+          t.dj.showcases.map((showcase) => (
+            <article class="showcase">
+              <div>
+                <h3>{showcase.title}</h3>
+                <p>{showcase.body}</p>
+                <ul class="checks">
+                  {showcase.points.map((point) => (
+                    <li>
+                      <Icon name="check" />
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <Phone image={showcase.image} alt={showcase.alt} />
+            </article>
+          ))
+        }
+      </div>
+      <ul class="cards extras">
+        {
+          t.dj.extras.map((extra) => (
+            <li class="card">
+              <h3>{extra.title}</h3>
+              <p>{extra.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="label">{t.data.kicker}</span>
+        <h2>{t.data.title}</h2>
+        <p>{t.data.lead}</p>
+      </div>
+      <ul class="features" style="--cols: 4">
+        {
+          t.data.items.map((item) => (
+            <li class="feature">
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand lang={lang} />
+</Base>

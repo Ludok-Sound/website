@@ -1,0 +1,14 @@
+---
+// Cada artículo en inglés: una página por fichero de content/articles/en/.
+import ArticlePage from '../../../components/ArticlePage.astro';
+import { articleSlug, getArticles, type Article } from '../../../articles';
+
+export async function getStaticPaths() {
+  const articles = await getArticles('en');
+  return articles.map((entry) => ({ params: { slug: articleSlug(entry) }, props: { entry } }));
+}
+
+const { entry } = Astro.props as { entry: Article };
+---
+
+<ArticlePage lang="en" entry={entry} />

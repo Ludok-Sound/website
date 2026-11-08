@@ -1,0 +1,25 @@
+---
+// Una captura de la app dentro de un marco de móvil. Las capturas ya van recortadas (sin la
+// barra de estado) y en WebP a 600 px de ancho: el doble de lo que se ve, para pantallas densas.
+import { href } from '../site';
+
+interface Props {
+  image: string;
+  alt: string;
+  eager?: boolean;
+}
+
+const { image, alt, eager = false } = Astro.props;
+---
+
+<figure class="phone">
+  <img
+    src={href(`/img/${image}.webp`)}
+    alt={alt}
+    width="600"
+    height="1228"
+    loading={eager ? 'eager' : 'lazy'}
+    fetchpriority={eager ? 'high' : 'auto'}
+    decoding="async"
+  />
+</figure>

@@ -1,0 +1,90 @@
+---
+// La página de Descargar: las tres plataformas, lo que hace falta, los primeros pasos y las
+// preguntas de antes de instalar. Los textos están en i18n.ts, bajo «download».
+import Icon from './Icon.astro';
+import PageHead from './PageHead.astro';
+import Base from '../layouts/Base.astro';
+import { ui } from '../i18n';
+import { paths, RELEASES_URL, SOUNDVAULT_URL, type Lang } from '../site';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = ui[lang].download;
+---
+
+<Base lang={lang} title={t.meta.title} description={t.meta.description} paths={paths.download} current="download">
+  <PageHead kicker={t.head.kicker} title={t.head.title} lead={t.head.lead} />
+
+  <section class="section download">
+    <div class="wrap">
+      <ul class="cards">
+        {
+          t.platforms.map((platform) => (
+            <li class="card">
+              <h2 class="platform-name">{platform.name}</h2>
+              <p>{platform.detail}</p>
+              <a class="btn btn-on btn-sm" href={RELEASES_URL}>
+                <Icon name="download" />
+                {platform.cta}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="need">
+        <div>
+          <h2>{t.needTitle}</h2>
+          <ul>
+            {t.need.map((item) => <li>{item}</li>)}
+          </ul>
+        </div>
+        <a class="btn" href={SOUNDVAULT_URL}>
+          {t.server}
+          <Icon name="arrow" />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>{t.start.title}</h2>
+      </div>
+      <ol class="steps">
+        {
+          t.start.steps.map((step, i) => (
+            <li>
+              <span class="num">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>{t.faq.title}</h2>
+      </div>
+      <div class="faq">
+        {
+          t.faq.items.map((item) => (
+            <details>
+              <summary>{item.q}</summary>
+              <p>{item.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Base>

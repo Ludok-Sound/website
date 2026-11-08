@@ -1,0 +1,30 @@
+---
+// El cierre de las páginas: la invitación a descargar, que lleva a la página de Descargar.
+import Icon from './Icon.astro';
+import { ui } from '../i18n';
+import { href, paths, REPO_URL, type Lang } from '../site';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = ui[lang].ctaBand;
+---
+
+<section class="section cta-band">
+  <div class="wrap">
+    <h2>{t.title}</h2>
+    <p>{t.lead}</p>
+    <div class="actions">
+      <a class="btn btn-primary" href={href(paths.download[lang])}>
+        <Icon name="download" />
+        {t.primary}
+      </a>
+      <a class="btn" href={REPO_URL}>
+        <Icon name="github" />
+        {t.secondary}
+      </a>
+    </div>
+  </div>
+</section>

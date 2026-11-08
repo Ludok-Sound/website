@@ -1,0 +1,42 @@
+---
+// La lista de artículos de un idioma.
+import Icon from './Icon.astro';
+import PageHead from './PageHead.astro';
+import Base from '../layouts/Base.astro';
+import { articleSlug, getArticles } from '../articles';
+import { ui } from '../i18n';
+import { articlePath, formatDate, href, paths, type Lang } from '../site';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = ui[lang].articles;
+const articles = await getArticles(lang);
+---
+
+<Base lang={lang} title={t.metaTitle} description={t.lead} paths={paths.articles} current="articles">
+  <PageHead kicker="Ludok Sound" title={t.title} lead={t.lead} />
+  <div class="wrap">
+    <ul class="article-list">
+      {
+        articles.map((entry) => (
+          <li>
+            <a class="article-item" href={href(articlePath(lang, articleSlug(entry)))}>
+              <time datetime={entry.data.pubDate.toISOString().slice(0, 10)}>
+                {formatDate(entry.data.pubDate, lang)}
+              </time>
+              <h2>{entry.data.title}</h2>
+              <p>{entry.data.description}</p>
+              <span class="link">
+                {t.read}
+                <Icon name="arrow" />
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Base>

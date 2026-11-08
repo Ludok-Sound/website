@@ -1,0 +1,18 @@
+---
+// Cabecera de las páginas que no son la portada: etiqueta, título y entradilla.
+interface Props {
+  kicker: string;
+  title: string;
+  lead: string;
+}
+
+const { kicker, title, lead } = Astro.props;
+---
+
+<header class="page-head">
+  <div class="wrap">
+    <span class="label"><span class="dot"></span>{kicker}</span>
+    <h1>{title}</h1>
+    <p>{lead}</p>
+  </div>
+</header>

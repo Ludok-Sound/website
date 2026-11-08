@@ -1,0 +1,97 @@
+---
+// Cabecera fija: marca, las pestañas (cada una es su propia página, la activa marcada), tema,
+// idioma, GitHub y el botón de Descargar. En pantallas estrechas las pestañas bajan a una fila
+// propia debajo, para que sigan a la vista.
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+import { ui } from '../i18n';
+import { href, paths, REPO_URL, type Lang, type Section } from '../site';
+
+interface Props {
+  lang: Lang;
+  /** La misma página en el otro idioma. */
+  altPath: string;
+  current?: Section;
+}
+
+const { lang, altPath, current } = Astro.props;
+const t = ui[lang].nav;
+const otherLang: Lang = lang === 'es' ? 'en' : 'es';
+const tabs: Section[] = ['home', 'features', 'visuals', 'articles'];
+---
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href={href(paths.home[lang])}>
+      <Logo />
+      Ludok Sound
+    </a>
+    <nav class="site-nav" aria-label={t.main}>
+      {
+        tabs.map((tab) => (
+          <a href={href(paths[tab][lang])} aria-current={current === tab ? 'page' : undefined}>
+            {t[tab]}
+          </a>
+        ))
+      }
+    </nav>
+    <div class="header-tools">
+      <button class="icon-btn theme-toggle" type="button" aria-label={t.theme} title={t.theme}>
+        <Icon name="sun" />
+        <Icon name="moon" />
+      </button>
+      <a class="icon-btn" href={href(altPath)} hreflang={otherLang} lang={otherLang} aria-label={t.langName} title={t.langName}>
+        {t.langShort}
+      </a>
+      <a class="icon-btn github" href={REPO_URL} aria-label={t.github} title={t.github}>
+        <Icon name="github" />
+      </a>
+      <a
+        class="btn btn-primary btn-sm"
+        href={href(paths.download[lang])}
+        aria-current={current === 'download' ? 'page' : undefined}
+      >
+        {t.download}
+      </a>
+    </div>
+  </div>
+</header>
+
+<script>
+  // El tema elegido se guarda; si nunca se ha elegido, se sigue al sistema, también cuando este
+  // cambia con la página abierta. El tema inicial lo pone el script en línea de Base.astro.
+  const root = document.documentElement;
+
+  document.querySelector('.theme-toggle')?.addEventListener('click', () => {
+    const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+    root.dataset.theme = next;
+    try {
+      localStorage.setItem('theme', next);
+    } catch {
+      // Sin almacenamiento (modo privado estricto): vale para esta visita.
+    }
+  });
+
+  matchMedia('(prefers-color-scheme: light)').addEventListener('change', (event) => {
+    try {
+      if (localStorage.getItem('theme')) return;
+    } catch {
+      // Sin almacenamiento no hay elección guardada: se sigue al sistema.
+    }
+    root.dataset.theme = event.matches ? 'light' : 'dark';
+  });
+
+  // La línea de debajo de la cabecera solo cuando hay algo debajo: arriba del todo sobra.
+  const header = document.querySelector('.site-header');
+  const onScroll = () => header?.toggleAttribute('data-scrolled', window.scrollY > 8);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // En el móvil la fila de pestañas puede no caber entera: que se vea la activa. Se mueve solo la
+  // fila (scrollIntoView podría mover también la página).
+  const nav = document.querySelector<HTMLElement>('.site-nav');
+  const active = nav?.querySelector<HTMLElement>('[aria-current="page"]');
+  if (nav && active && nav.scrollWidth > nav.clientWidth) {
+    nav.scrollLeft = active.offsetLeft - (nav.clientWidth - active.offsetWidth) / 2;
+  }
+</script>

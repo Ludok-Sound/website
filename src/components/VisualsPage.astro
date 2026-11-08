@@ -1,0 +1,145 @@
+---
+// La página de Visuales: el vídeo, lo que pone cada canción, los motores, cómo se usa y las
+// teclas de la ventana. La cabecera va sobre la franja oscura también con el tema claro, como el
+// vídeo. Los textos están en i18n.ts, bajo «visuals».
+import CtaBand from './CtaBand.astro';
+import VisualsVideo from './VisualsVideo.astro';
+import Base from '../layouts/Base.astro';
+import { ui } from '../i18n';
+import { paths, type Lang } from '../site';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = ui[lang].visuals;
+---
+
+<Base lang={lang} title={t.meta.title} description={t.meta.description} paths={paths.visuals} current="visuals">
+  <section class="band-dark visuals-hero">
+    <div class="wrap">
+      <header class="section-head centered">
+        <span class="label"><span class="dot"></span>{t.head.kicker}</span>
+        <h1>{t.head.title}</h1>
+        <p>{t.head.lead}</p>
+      </header>
+      <VisualsVideo lang={lang} />
+      <ul class="features after-video" style="--cols: 3">
+        {
+          t.points.map((point) => (
+            <li class="feature">
+              <h3>{point.title}</h3>
+              <p>{point.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>{t.song.title}</h2>
+        <p>{t.song.lead}</p>
+      </div>
+      <ul class="features" style="--cols: 3">
+        {
+          t.song.items.map((item) => (
+            <li class="feature">
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>{t.engines.title}</h2>
+        <p>{t.engines.lead}</p>
+      </div>
+      <div class="table-wrap narrow">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">{t.engines.head[0]}</th>
+              <th scope="col">{t.engines.head[1]}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              t.engines.rows.map(([engine, genres]) => (
+                <tr>
+                  <th scope="row" class="strong">{engine}</th>
+                  <td>{genres}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>{t.use.title}</h2>
+      </div>
+      <ol class="features" style="--cols: 3">
+        {
+          t.use.steps.map((step, i) => (
+            <li class="feature">
+              <span class="num">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+
+      <h3 class="sub-title">{t.keys.title}</h3>
+      <div class="table-wrap narrow">
+        <table class="data-table keys-table">
+          <thead>
+            <tr>
+              <th scope="col">{t.keys.head[0]}</th>
+              <th scope="col">{t.keys.head[1]}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              t.keys.items.map((item) => (
+                <tr>
+                  <td>
+                    <span class="keys">
+                      {item.keys.map((key, i) => (
+                        <>
+                          {i > 0 && item.combo && <span>+</span>}
+                          <kbd>{key}</kbd>
+                        </>
+                      ))}
+                    </span>
+                  </td>
+                  <td>{item.action}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <aside class="note">
+        <h3>{t.next.title}</h3>
+        <p>{t.next.body}</p>
+      </aside>
+    </div>
+  </section>
+
+  <CtaBand lang={lang} />
+</Base>

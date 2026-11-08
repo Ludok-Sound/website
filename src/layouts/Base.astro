@@ -1,0 +1,83 @@
+---
+// Esqueleto de todas las páginas: <head> con lo que necesitan los buscadores y las redes
+// (canónica, versión en el otro idioma, Open Graph), el tema antes de pintar, cabecera y pie.
+import '../styles/global.css';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { ui } from '../i18n';
+import { AUTHOR, href, INDEXABLE, type Lang, type Section } from '../site';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  /** Ruta de esta página en cada idioma (sin el prefijo del repo). */
+  paths: Record<Lang, string>;
+  /** La pestaña que se marca en la cabecera. */
+  current?: Section;
+  ogType?: 'website' | 'article';
+  jsonLd?: Record<string, unknown>;
+}
+
+const { lang, title, description, paths, current, ogType = 'website', jsonLd } = Astro.props;
+const otherLang: Lang = lang === 'es' ? 'en' : 'es';
+const site = Astro.site!;
+const abs = (path: string) => new URL(href(path), site).toString();
+const canonical = abs(paths[lang]);
+const ogImage = abs('/og.png');
+---
+
+<!doctype html>
+<html lang={lang} data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {!INDEXABLE && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang={lang} href={canonical} />
+    <link rel="alternate" hreflang={otherLang} href={abs(paths[otherLang])} />
+    <link rel="alternate" hreflang="x-default" href={abs(paths.es)} />
+    <link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f6f5f3" media="(prefers-color-scheme: light)" />
+    <meta name="author" content={AUTHOR} />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content="Ludok Sound" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={lang === 'es' ? 'es_ES' : 'en_US'} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+
+    <script is:inline>
+      // Antes de pintar nada: el tema guardado o, si no hay, el del sistema. Si esperase al
+      // script de la cabecera, con el sistema en claro la página saldría un instante en oscuro.
+      (() => {
+        let theme = null;
+        try {
+          theme = localStorage.getItem('theme');
+        } catch {}
+        if (theme !== 'light' && theme !== 'dark') {
+          theme = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">{ui[lang].nav.skip}</a>
+    <Header lang={lang} altPath={paths[otherLang]} current={current} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+  </body>
+</html>

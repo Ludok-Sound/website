@@ -1,0 +1,57 @@
+---
+// El clip de los visuales de sesión, con su pie. Sale en la portada y en la página de Visuales.
+import { ui } from '../i18n';
+import { href, type Lang } from '../site';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = ui[lang].visuals;
+---
+
+<figure>
+  <div class="video-frame">
+    <video
+      class="visuals-video"
+      muted
+      loop
+      playsinline
+      controls
+      preload="none"
+      width="1280"
+      height="404"
+      poster={href('/img/visuales-poster.jpg')}
+      aria-label={t.videoLabel}
+    >
+      <source src={href('/video/visuales.webm')} type="video/webm" />
+      <source src={href('/video/visuales.mp4')} type="video/mp4" />
+    </video>
+  </div>
+  <figcaption class="video-caption">{t.caption}</figcaption>
+</figure>
+
+<script>
+  // El vídeo arranca solo cuando se ve y se para al salir, para no gastar datos ni batería por
+  // debajo de la página. Con «reducir movimiento» no arranca: se queda con sus controles, que
+  // también son lo que se ve si no hay JavaScript.
+  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!calm && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const { target, isIntersecting } of entries) {
+          const video = target as HTMLVideoElement;
+          if (isIntersecting) video.play().catch(() => (video.controls = true));
+          else video.pause();
+        }
+      },
+      { threshold: 0.3 },
+    );
+    for (const video of document.querySelectorAll<HTMLVideoElement>('.visuals-video')) {
+      video.controls = false;
+      observer.observe(video);
+    }
+  }
+</script>

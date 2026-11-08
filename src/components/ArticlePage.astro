@@ -1,0 +1,75 @@
+---
+// Un artículo: cabecera, el Markdown y, al final, la invitación a probar la app. El cambio de
+// idioma lleva a su traducción si la hay y, si no, a la lista de artículos del otro idioma.
+import Icon from './Icon.astro';
+import Base from '../layouts/Base.astro';
+import { articleSlug, getArticles, readingMinutes, type Article } from '../articles';
+import { ui } from '../i18n';
+import { articlePath, AUTHOR, formatDate, href, paths, REPO_URL, type Lang } from '../site';
+import { render } from 'astro:content';
+
+interface Props {
+  lang: Lang;
+  entry: Article;
+}
+
+const { lang, entry } = Astro.props;
+const t = ui[lang].articles;
+const cta = ui[lang].ctaBand;
+const slug = articleSlug(entry);
+const otherLang: Lang = lang === 'es' ? 'en' : 'es';
+const translated = (await getArticles(otherLang)).some((other) => articleSlug(other) === slug);
+
+const pagePaths = {
+  [lang]: articlePath(lang, slug),
+  [otherLang]: translated ? articlePath(otherLang, slug) : paths.articles[otherLang],
+} as Record<Lang, string>;
+
+const { Content } = await render(entry);
+const { title, description, pubDate, updatedDate } = entry.data;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description,
+  datePublished: pubDate.toISOString(),
+  dateModified: (updatedDate ?? pubDate).toISOString(),
+  author: { '@type': 'Person', name: AUTHOR },
+  inLanguage: lang,
+};
+---
+
+<Base lang={lang} title={`${title} | Ludok Sound`} description={description} paths={pagePaths} current="articles" ogType="article" jsonLd={jsonLd}>
+  <article class="article">
+    <a class="back" href={href(paths.articles[lang])}>
+      <Icon name="arrow" />
+      {t.back}
+    </a>
+    <h1>{title}</h1>
+    <div class="article-meta">
+      <time datetime={pubDate.toISOString().slice(0, 10)}>{formatDate(pubDate, lang)}</time>
+      <span>{readingMinutes(entry)} {t.minutes}</span>
+    </div>
+    <p class="article-desc">{description}</p>
+    <div class="prose">
+      <Content />
+    </div>
+    <aside class="article-cta">
+      <div>
+        <h2>{cta.title}</h2>
+        <p>{cta.lead}</p>
+      </div>
+      <div class="actions">
+        <a class="btn btn-primary" href={href(paths.download[lang])}>
+          <Icon name="download" />
+          {cta.primary}
+        </a>
+        <a class="btn" href={REPO_URL}>
+          <Icon name="github" />
+          GitHub
+        </a>
+      </div>
+    </aside>
+  </article>
+</Base>

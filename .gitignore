@@ -1,0 +1,7 @@
+# dependencias y salida de Astro
+node_modules/
+dist/
+.astro/
+
+# configuración local de la CLI de Vercel
+.vercel/
