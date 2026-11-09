@@ -5,7 +5,7 @@ import '../styles/global.css';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { ui } from '../i18n';
-import { AUTHOR, href, INDEXABLE, type Lang, type Section } from '../site';
+import { AUTHOR, href, INDEXABLE, ON_VERCEL, type Lang, type Section } from '../site';
 
 interface Props {
   lang: Lang;
@@ -71,6 +71,23 @@ const ogImage = abs('/og.png');
         document.documentElement.dataset.theme = theme;
       })();
     </script>
+
+    {
+      // Web Analytics y Speed Insights de Vercel: sin cookies ni datos personales. Son los mismos
+      // scripts que cargan @vercel/analytics y @vercel/speed-insights, sin el paquete. Vercel los
+      // sirve desde la propia web (/_vercel/...), así que solo existen al publicar ahí: en local
+      // no se cargan.
+      ON_VERCEL && (
+        <>
+          <script is:inline>
+            window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+            window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+          </script>
+          <script is:inline defer src="/_vercel/insights/script.js"></script>
+          <script is:inline defer src="/_vercel/speed-insights/script.js"></script>
+        </>
+      )
+    }
   </head>
   <body>
     <a class="skip" href="#main">{ui[lang].nav.skip}</a>

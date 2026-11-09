@@ -16,6 +16,10 @@ export const AUTHOR = 'Luken Iriondo';
 declare const __INDEXABLE__: boolean;
 export const INDEXABLE: boolean = __INDEXABLE__;
 
+// Si la web se compila en Vercel: solo ahí existen los scripts de analítica (ver Base.astro).
+declare const __ON_VERCEL__: boolean;
+export const ON_VERCEL: boolean = __ON_VERCEL__;
+
 // Las rutas internas pasan siempre por href(), por si la web vuelve a colgar de una subcarpeta
 // (como en GitHub Pages, /<repo>/): hoy la base es «/».
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');

@@ -15,6 +15,8 @@ export default defineConfig({
     define: {
       // Solo con dominio propio se deja indexar (ver src/site.ts).
       __INDEXABLE__: JSON.stringify(Boolean(process.env.SITE_URL)),
+      // Vercel pone VERCEL=1 al compilar: la analítica solo se carga ahí (ver Base.astro).
+      __ON_VERCEL__: JSON.stringify(process.env.VERCEL === '1'),
     },
   },
 });
